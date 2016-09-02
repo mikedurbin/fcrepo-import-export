@@ -36,16 +36,11 @@ public class ArgParserTest {
 
     @Test
     public void parseValidImport() throws Exception {
-        final String[] args = new String[]{"-m", "import"};
+        final String[] args = new String[]{"-m", "import",
+                                           "-r", "http://localhost:8080/rest",
+                                           "-d", "/tmp/rdf"};
         final Config config = parser.parseConfiguration(args);
         Assert.assertTrue(config.isImport());
-    }
-
-    @Test
-    public void parseValidExport() throws Exception {
-        final String[] args = new String[]{"-m", "export"};
-        final Config config = parser.parseConfiguration(args);
-        Assert.assertTrue(config.isExport());
     }
 
     @Test (expected = RuntimeException.class)

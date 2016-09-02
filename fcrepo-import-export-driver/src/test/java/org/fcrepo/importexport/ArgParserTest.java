@@ -38,7 +38,9 @@ public class ArgParserTest {
 
     @Test
     public void parseValidImport() throws Exception {
-        final String[] args = new String[]{"-m", "import"};
+        final String[] args = new String[]{"-m", "import",
+                                           "-d", "/tmp/rdf",
+                                           "-r", "http://localhost:8080/rest/1"};
         final TransferProcess processor = parser.parse(args);
         Assert.assertTrue(processor instanceof Importer);
     }

@@ -17,13 +17,23 @@
  */
 package org.fcrepo.importer;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 /**
  * @author awoods
+ * @author escowles
  * @since 2016-08-29
  */
 public class Config {
 
     private String mode;
+    private URI resource;
+    private File binaryDirectory;
+    private File descriptionDirectory;
+    private String rdfExtension;
+    private String rdfLanguage;
 
     /**
      * This method returns true if the configuration is set for 'import'
@@ -52,4 +62,99 @@ public class Config {
         this.mode = mode;
     }
 
+    /**
+     * Sets the base directory for binaries.
+     */
+    public void setBinaryDirectory(final String directory) {
+        this.binaryDirectory = directory == null ? null : new File(directory);
+    }
+
+    /**
+     * Sets the base directory for binaries.
+     */
+    public void setBinaryDirectory(final File directory) {
+        this.binaryDirectory = directory;
+    }
+
+    /**
+     * Gets the base directory for binaries.
+     */
+    public File getBinaryDirectory() {
+        return binaryDirectory;
+    }
+
+    /**
+     * Sets the base directory for descriptions.
+     */
+    public void setDescriptionDirectory(final String directory) {
+        this.descriptionDirectory = new File(directory);
+    }
+
+    /**
+     * Sets the base directory for descriptions.
+     */
+    public void setDescriptionDirectory(final File directory) {
+        this.descriptionDirectory = directory;
+    }
+
+    /**
+     * Gets the base directory for descriptions.
+     */
+    public File getDescriptionDirectory() {
+        return descriptionDirectory;
+    }
+
+    /**
+     * Sets the URI of the resource to import/export
+     */
+    public void setResource(final String resource) throws URISyntaxException {
+        setResource(new URI(resource));
+    }
+
+    /**
+     * Sets the URI of the resource to import/export
+     */
+    public void setResource(final URI resource) throws URISyntaxException {
+        if (resource.toString().endsWith("/")) {
+            this.resource = new URI(
+                resource.toString().substring(0, resource.toString().length() - 1));
+        } else {
+            this.resource = resource;
+        }
+    }
+
+    /**
+     * Gets the URI of the resource to import/export
+     */
+    public URI getResource() {
+        return resource;
+    }
+
+    /**
+     * Sets the RDF filename extension
+     */
+    public void setRdfExtension(final String extension) {
+        this.rdfExtension = extension;
+    }
+
+    /**
+     * Gets the RDF filename extension
+     */
+    public String getRdfExtension() {
+        return rdfExtension;
+    }
+
+    /**
+     * Sets the RDF language
+     */
+    public void setRdfLanguage(final String language) {
+        this.rdfLanguage = language;
+    }
+
+    /**
+     * Gets the RDF language
+     */
+    public String getRdfLanguage() {
+        return rdfLanguage;
+    }
 }
