@@ -70,6 +70,8 @@ public class Config {
     private String username;
     private String password;
 
+    private File previousBagManifest = null;
+
     private boolean auditLog = false;
 
     /**
@@ -483,6 +485,24 @@ public class Config {
      */
     public boolean isLegacy() {
         return this.legacy;
+    }
+
+    /**
+     * Sets a bagit sha1 manifest file representing a previously created bag.  The newly created bag
+     * will omit any unchanged files from the previous one.
+     * @param manifestFile a sha1 manifest file from a previously created bagit bag
+     */
+    public void setPreviousBagManifest(final File manifestFile) {
+        previousBagManifest = manifestFile;
+    }
+
+    /**
+     * Gets the bagit sha1 manifest file representing a previously created bag.  The newly created bag
+     * will omit any unchanged files from the previous one.
+     * @return a sha1 manifest file from a previously created bagit bag, or null if none specified
+     */
+    public File getPreviousBagManifest() {
+        return previousBagManifest;
     }
 
     /**

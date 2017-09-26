@@ -140,6 +140,14 @@ public class ArgParser {
                        " specified filename.")
                 .required(false).build());
 
+        // create a diff-bag
+        configOptions.addOption(Option.builder("f")
+                .longOpt("previousBagManifest")
+                .hasArg(true).numberOfArgs(1).argName("previousBagManifest")
+                .desc("When present this flag indicates that the produced bag should omit files that are known" +
+                        " to have not changed compared with those indicated in the specified manifest-sha1.txt file.")
+                .required(false).build());
+
         // Overwrite Tombstones
         configOptions.addOption(Option.builder("t")
                  .longOpt("overwriteTombstones")
@@ -270,6 +278,9 @@ public class ArgParser {
                 config.getBagConfigPath() != null) {
             throw new RuntimeException("A bagit profile must be set when you set a bagit config.");
         }
+        if (config.getPreviousBagManifest() != null && config.getBagProfile() == null) {
+            throw new RuntimeException("A previous bag manifest can only be specified when using the bagit output.");
+        }
 
     }
 
@@ -376,6 +387,11 @@ public class ArgParser {
         config.setBagConfigPath(cmd.getOptionValue('G'));
 
         config.setAuditLog(cmd.hasOption('a'));
+
+        final String manifest = cmd.getOptionValue("f");
+        if (manifest != null) {
+            config.setPreviousBagManifest(new File(manifest));
+        }
 
         return config;
     }

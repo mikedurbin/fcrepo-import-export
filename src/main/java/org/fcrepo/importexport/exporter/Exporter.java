@@ -112,6 +112,7 @@ public class Exporter implements TransferProcess {
     private HashMap<File, String> md5FileMap = null;
 
     private Logger exportLogger;
+    private ExportFilter filter;
     private SimpleDateFormat dateFormat;
     private AtomicLong successCount = new AtomicLong(); // set to zero at start
     private AtomicLong successBytes = new AtomicLong();
@@ -163,6 +164,10 @@ public class Exporter implements TransferProcess {
                 this.bag = new BagWriter(bagdir, algorithms);
                 for (final String tagFile : bagConfig.getTagFiles()) {
                     this.bag.addTags(tagFile, bagConfig.getFieldsForTagFile(tagFile));
+                }
+
+                if (config.getPreviousBagManifest() != null) {
+                    filter = new AccretionBagExportFilter(config.getPreviousBagManifest(), client(), config);
                 }
 
             } catch (NoSuchAlgorithmException e) {
@@ -254,9 +259,17 @@ public class Exporter implements TransferProcess {
                 final String contentType = response.getContentType();
                 final boolean external = contentType != null && contentType.contains("message/external-body");
                 final List<URI> describedby = response.getLinkHeaders("describedby");
-                exportBinary(uri, describedby, external);
+                if (filter == null || filter.includeBinaryResource(describedby, uri)) {
+                    exportBinary(uri, describedby, external);
+                } else {
+                    logger.info("Filtered out {}", uri);
+                }
             } else if (linkHeaders.contains(containerURI)) {
-                exportDescription(uri, null);
+                if (filter == null || filter.includeRDFResource(uri)) {
+                    exportDescription(uri, null);
+                } else {
+                    logger.info("Filtered out {}", uri);
+                }
                 // Export versions for this container
                 exportVersions(uri);
             } else {
